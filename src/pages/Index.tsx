@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import heroImage from "@/assets/hero-hvac.jpg";
+import BookAppointment from "@/components/BookAppointment";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -320,6 +321,7 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      <BookAppointment />
     </div>
   );
 };
