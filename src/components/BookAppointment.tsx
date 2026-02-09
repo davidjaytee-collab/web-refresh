@@ -1,27 +1,27 @@
 import { useState } from "react";
-import { Calendar, Phone, User, Mail, X, CalendarCheck } from "lucide-react";
+import { Phone, User, Mail, X, CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "@/hooks/use-toast";
+
+const BUSINESS_EMAIL = "info@newyorkheatingsi.com";
 
 const BookAppointment = () => {
   const [open, setOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [service, setService] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
-    toast({
-      title: "Appointment Requested!",
-      description: "We'll call you back shortly to confirm your appointment.",
-    });
-    setTimeout(() => {
-      setOpen(false);
-      setSubmitted(false);
-    }, 2500);
+    const subject = encodeURIComponent(`Appointment Request from ${name}`);
+    const body = encodeURIComponent(
+      `Name: ${name}\nPhone: ${phone}\nEmail: ${email || "N/A"}\n\nService Needed:\n${service}`
+    );
+    window.location.href = `mailto:${BUSINESS_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -35,7 +35,6 @@ const BookAppointment = () => {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="mb-4 w-[340px] rounded-2xl border bg-card shadow-2xl overflow-hidden"
           >
-            {/* Header */}
             <div className="bg-primary px-5 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-primary-foreground">
                 <CalendarCheck className="h-5 w-5" />
@@ -49,80 +48,57 @@ const BookAppointment = () => {
               </button>
             </div>
 
-            {/* Body */}
             <div className="p-5">
-              {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center py-6"
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div>
+                  <Label htmlFor="name" className="text-xs font-semibold text-muted-foreground">Full Name</Label>
+                  <div className="relative mt-1">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input id="name" required placeholder="John Doe" className="pl-9" value={name} onChange={(e) => setName(e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="phone" className="text-xs font-semibold text-muted-foreground">Phone Number</Label>
+                  <div className="relative mt-1">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input id="phone" type="tel" required placeholder="(718) 555-0100" className="pl-9" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="email" className="text-xs font-semibold text-muted-foreground">Email (optional)</Label>
+                  <div className="relative mt-1">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input id="email" type="email" placeholder="john@example.com" className="pl-9" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="service" className="text-xs font-semibold text-muted-foreground">Service Needed</Label>
+                  <div className="relative mt-1">
+                    <Textarea
+                      id="service"
+                      required
+                      placeholder="e.g. AC not cooling, furnace repair..."
+                      className="min-h-[70px] resize-none"
+                      value={service}
+                      onChange={(e) => setService(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold shadow-lg"
                 >
-                  <div className="mx-auto rounded-full bg-secondary/10 p-4 w-fit mb-4">
-                    <CalendarCheck className="h-8 w-8 text-secondary" />
-                  </div>
-                  <h4 className="font-bold text-foreground text-lg mb-1">Request Sent!</h4>
-                  <p className="text-muted-foreground text-sm">We'll contact you shortly.</p>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-3">
-                  <div>
-                    <Label htmlFor="name" className="text-xs font-semibold text-muted-foreground">
-                      Full Name
-                    </Label>
-                    <div className="relative mt-1">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="name" required placeholder="John Doe" className="pl-9" />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone" className="text-xs font-semibold text-muted-foreground">
-                      Phone Number
-                    </Label>
-                    <div className="relative mt-1">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="phone" type="tel" required placeholder="(718) 555-0100" className="pl-9" />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="email" className="text-xs font-semibold text-muted-foreground">
-                      Email (optional)
-                    </Label>
-                    <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="email" type="email" placeholder="john@example.com" className="pl-9" />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="service" className="text-xs font-semibold text-muted-foreground">
-                      Service Needed
-                    </Label>
-                    <div className="relative mt-1">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Textarea
-                        id="service"
-                        required
-                        placeholder="e.g. AC not cooling, furnace repair..."
-                        className="pl-9 min-h-[70px] resize-none"
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold shadow-lg"
-                  >
-                    Request Appointment
-                  </Button>
-                  <p className="text-[11px] text-muted-foreground text-center">
-                    We'll call you back to confirm a time.
-                  </p>
-                </form>
-              )}
+                  Send via Email
+                </Button>
+                <p className="text-[11px] text-muted-foreground text-center">
+                  Opens your email app with the details pre-filled.
+                </p>
+              </form>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Floating Button */}
       <motion.button
         onClick={() => setOpen(!open)}
         whileHover={{ scale: 1.05 }}
