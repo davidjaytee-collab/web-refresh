@@ -90,9 +90,6 @@ const BookAppointment = () => {
                 >
                   Send via Email
                 </Button>
-                <p className="text-[11px] text-muted-foreground text-center">
-                  Opens your email app with the details pre-filled.
-                </p>
               </form>
             </div>
           </motion.div>
